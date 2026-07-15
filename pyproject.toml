@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tamutrap-timing"
+version = "1.0.0"
+description = "TAMUTRAP RFQ pulse-timing controller: pure pulse math, PulseBlaster driver, tkinter GUI, and (WIP) EPICS IOC."
+readme = "README.md"
+requires-python = ">=3.11"
+
+# Always needed, as the pure data model (core.py) only depends on these.
+# Kept deliberately tiny so the *same* core is importable by the GUI box,
+# a headless IOC node, and the test suite without dragging extra deps along.
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+# Windows operator workstation (the tkinter app). tkinter ships with CPython.
+gui = [
+    "matplotlib>=3.7",
+]
+# EPICS control node (the IOC). caproto is a pure-Python Channel Access
+# server + client, so this installs cleanly on Linux *and* Windows.
+# NOTE: this does NOT include EPICS Base. That is a separate, system-level
+# install (softIoc / caget / caput). See docs/EPICS_MIGRATION.md section 2.
+ioc = [
+    "caproto>=1.1",
+]
+# Development / testing / client scripting.
+dev = [
+    "pytest>=7",
+    "pyepics>=3.5",
+]
+
+# ---------------------------------------------------------------------------
+# Packaging: the existing modules live flat in src/ (core.py, timing_card.py,
+# changelog.py, gui_tk.py) and import each other flatly ("from core import …").
+# A src-layout with py-modules makes `pip install -e .` expose them as
+# importable top-level modules *without changing a single import line* in the
+# source. The IOC (in ioc/) can then do `from core import PulseConfig, …`.
+#
+# Future cleanup (not now, would touch working code): promote these into a
+# `tamutrap_rfq` package namespace to avoid generic top-level names like `core`.
+# ---------------------------------------------------------------------------
+[tool.setuptools]
+package-dir = { "" = "src" }
+py-modules = ["core", "timing_card", "changelog", "gui_tk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,11 @@
+#== All times are in microseconds (us). Connection labels MUST NOT have any     ==#
+#== whitespace. Use underscores instead. This file's format is fairly specific. ==#
+#== You can manually add channels (up to 24) and widen the column spacing, but  ==#
+#== nothing more really. Inversion is "True"/"False".                           ==#
+
+Total Period
+400.00
+
+Channel   Connection                        Start       Duration   Invert
+      0   Yellow                           0.00         200.00     True
+      4   Blue                           100.00         100.00     True

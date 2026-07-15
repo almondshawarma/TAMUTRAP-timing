@@ -1,0 +1,11 @@
+.venv/ 
+.env 
+__pycache__/ 
+*.pyc
+pulses3.changelog.jsonl
+*.changelog.log
+.iocsh_history
+ioc/rfq_autosave.json
+EPICS_MIGRATION.md
+.pytest_cache
+EPICS_SETUP.md

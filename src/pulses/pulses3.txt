@@ -1,0 +1,23 @@
+#== All times are in microseconds (us). Connection labels ==#
+#== MUST NOT have any whitespace. Use underscores instead ==#
+#== This file's format is fairly specific. You can add    ==#
+#== channels (up to 24) and widen the column spacing, but ==#
+#== nothing more really. Inversion is True/False.         ==#
+
+Total Period 
+600000.00
+
+Channel     Connection                      Start        Duration     Invert  
+0           RFQ                              0.00           14.25       True
+1           Injection_Cavity                49.00          830.00       True
+2           Pulsing_Cavity                  16.50          830.00       True
+3           Trigger_to_DAQ              560285.00          830.00       True
+4           Extraction_End_Cap          561050.00          300.00       True
+5           Injection_End_Cap               43.50           21.00       True
+6           Injection_End_Elect             43.50           21.00       True
+7           Extraction_Corr_Elect       561050.00          300.00       True
+8           Injection_Corr_Elect            43.50           21.00       True
+9           Extraction_End_Elect        561050.00          300.00       True
+10          Magnetron_Excitation        344600.00           25.00       True
+11          Cyclotron_Excitation        361000.00        20000.00       True
+12          Cyclotron_Excitation2       361000.00       200000.00       True

@@ -1,0 +1,5 @@
+# Shell scripts must stay LF, or a Windows CRLF checkout breaks the shebang on
+# Linux ("bad interpreter: .../bash^M").
+*.sh text eol=lf
+# Windows batch files are the opposite
+*.bat text eol=crlf

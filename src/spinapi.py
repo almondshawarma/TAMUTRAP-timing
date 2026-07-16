@@ -24,14 +24,20 @@ import ctypes
 PULSE_PROGRAM = 0
 FREQ_REGS = 1  
    
+# --- ALTERED from original SpinCore source (permitted by the license above;
+# restriction 2 requires marking alterations): added Linux loading of
+# libspinapi.so. The original tried only the Windows names spinapi64 / spinapi. ---
 try:
-	spinapi = ctypes.CDLL("spinapi64")
-except:
+	spinapi = ctypes.CDLL("spinapi64")          # Windows 64-bit
+except OSError:
 	try:
-		spinapi = ctypes.CDLL("spinapi")
-	except:
-		print("Failed to load spinapi library.")
-		pass
+		spinapi = ctypes.CDLL("spinapi")        # Windows 32-bit
+	except OSError:
+		try:
+			spinapi = ctypes.CDLL("libspinapi.so")   # Linux (found via LD_LIBRARY_PATH)
+		except OSError:
+			print("Failed to load spinapi library.")
+			raise
 	
 def enum(**enums):
     return type('Enum', (), enums)

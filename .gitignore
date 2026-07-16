@@ -9,3 +9,10 @@ ioc/rfq_autosave.json
 EPICS_MIGRATION.md
 .pytest_cache
 EPICS_SETUP.md
+
+# Compiled SpinAPI driver + cmake output: built per-machine, never committed
+# (a .so is arch/glibc-specific and won't be portable). The *source* tarball is
+# vendored in third_party/; the extracted tree and build output are not.
+*.so
+build/
+third_party/SpinAPI_linux-*/

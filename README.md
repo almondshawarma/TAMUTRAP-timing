@@ -173,10 +173,6 @@ day-to-day work.
 > Note: EPICS Base itself (`softIoc`/`caget`/`caput`) is a separate system-level
 > install, not a pip package, but you don't need it to run the caproto IOC,
 > which ships its own `caproto-get`/`caproto-put`/`caproto-monitor` clients.
->
-> The legacy [`requirements.txt`](requirements.txt) is a bloated full-environment
-> freeze that still carries the old Kivy stack. It's superseded by the above and
-> kept only until nothing scripts against it.
 
 ## Getting started
 
@@ -205,15 +201,35 @@ pytest
 A failure there simply means "prove the new output is correct and re-pin the golden
 master," not "just bump the number."
 
-## About spinapi.py
+## The SpinCore driver (Windows and Linux)
 
 [`src/spinapi.py`](src/spinapi.py) is SpinCore Technologies' `ctypes` wrapper
-around their `spinapi64.dll`, and [`src/spinapi64.dll`](src/spinapi64.dll) is the
-driver itself. Both are vendored here, as SpinCore ships them under a permissive
-zlib-style license that explicitly allows redistribution, so a fresh checkout on
-the lab's card machine is import-and-go with nothing else to fetch! On any
-machine without the board, the import fails and `timing_card.py` runs dry-run
-automatically, but nothing else significant changes.
+around their SpinAPI library. It's vendored here (SpinCore ships it under a
+permissive zlib-style license that explicitly allows redistribution) and loads the
+right library for whichever platform it's running on.
+
+**Windows** — [`src/spinapi64.dll`](src/spinapi64.dll) is vendored too, so a fresh
+checkout on the lab's Windows card machine is import-and-go, nothing else to fetch!
+
+**Linux** — the driver *isn't* a portable binary (a `.so` compiled on one machine
+won't load on a different distro/glibc), so it's built from source rather than
+committed. The SpinAPI **source** is vendored in [`third_party/`](third_party/) —
+so you never depend on SpinCore's site staying up — and built per-machine:
+
+```bash
+cd third_party && tar xzf SpinAPI_linux-*.tar.gz
+cd SpinAPI_linux-*/ && mkdir build && cd build && cmake .. && make      # -> build/src/libspinapi.so
+# point the wrapper at it (bash shown; csh: setenv LD_LIBRARY_PATH "$cwd/src:$LD_LIBRARY_PATH"):
+export LD_LIBRARY_PATH="$PWD/src:$LD_LIBRARY_PATH"
+```
+
+Non-root device access on Linux also needs a one-time udev rule plus a `spincore`
+group (root); see SpinCore's
+[Linux instructions](https://spincore.com/support/spinapi/Linux_Help.shtml) and
+[`third_party/README.md`](third_party/README.md).
+
+On any machine without the board (or before the driver is set up), the import fails
+and `timing_card.py` runs dry-run automatically, so nothing else significant changes.
 
 ## Notes
 

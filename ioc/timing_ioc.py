@@ -320,7 +320,7 @@ class timingIOC(PVGroup):
 
 def main() -> None:
     ioc_options, run_options = ioc_arg_parser(
-        default_prefix="TAMUTRAP:timing:",
+        default_prefix="TAMUTRAP:Timing:",
         desc="TAMUTRAP pulse-timing EPICS IOC (dry-run safe).",
     )
     ioc = timingIOC(**ioc_options)

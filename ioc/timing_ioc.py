@@ -1,4 +1,4 @@
-"""EPICS IOC for the TAMUTRAP RFQ pulse-timing controller.
+"""EPICS IOC for the TAMUTRAP timing pulse-timing controller.
 
 This is a *thin adapter*, mapping EPICS Process Variables (PVs) onto the
 existing pure model (`core.py`) and hardware driver (`timing_card.py`). No
@@ -21,13 +21,13 @@ Notes
 
 Run it (dry-run)::
 
-    python ioc/rfq_ioc.py --list-pvs
+    python ioc/timing_ioc.py --list-pvs
     # then, in another shell:
-    caget TAMUTRAP:RFQ:Period
-    caput TAMUTRAP:RFQ:CH0:Active 1
-    caput TAMUTRAP:RFQ:CH0:Dur 5
-    caput TAMUTRAP:RFQ:Push 1
-    camonitor TAMUTRAP:RFQ:RunState
+    caget TAMUTRAP:timing:Period
+    caput TAMUTRAP:timing:CH0:Active 1
+    caput TAMUTRAP:timing:CH0:Dur 5
+    caput TAMUTRAP:timing:Push 1
+    camonitor TAMUTRAP:timing:RunState
 """
 from __future__ import annotations
 
@@ -56,7 +56,7 @@ from core import (  # noqa: E402
 )
 from timing_card import connect_or_dry_run  # noqa: E402
 
-_AUTOSAVE = Path(__file__).resolve().parent / "rfq_autosave.json"
+_AUTOSAVE = Path(__file__).resolve().parent / "timing_autosave.json"
 _DEFAULT_PULSES = _SRC / "pulses" / "pulses3.txt"
 
 
@@ -112,7 +112,7 @@ class ChannelGroup(PVGroup):
 # ---------------------------------------------------------------------------
 # Top-level IOC
 # ---------------------------------------------------------------------------
-class RFQIOC(PVGroup):
+class timingIOC(PVGroup):
     period = pvproperty(value=1000.0, name="Period", units="us", precision=2,
                         doc="Total repeating cycle period [us]")
     push = pvproperty(value=False, name="Push",
@@ -320,10 +320,10 @@ class RFQIOC(PVGroup):
 
 def main() -> None:
     ioc_options, run_options = ioc_arg_parser(
-        default_prefix="TAMUTRAP:RFQ:",
-        desc="TAMUTRAP RFQ pulse-timing EPICS IOC (dry-run safe).",
+        default_prefix="TAMUTRAP:timing:",
+        desc="TAMUTRAP pulse-timing EPICS IOC (dry-run safe).",
     )
-    ioc = RFQIOC(**ioc_options)
+    ioc = timingIOC(**ioc_options)
     run(ioc.pvdb, **run_options)
 
 

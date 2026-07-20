@@ -76,7 +76,7 @@ correct, and it knows nothing about hardware or UI.
   as the LSTAR MPOD tools, so `cat`/`grep` work quite easily.
 - [`gui_tk.py`](src/gui_tk.py): The tkinter app, imports from `core` and
   `timing_card`, instead of the other way around.
-- [`ioc/rfq_ioc.py`](ioc/rfq_ioc.py): An EPICS IOC (see below) that imports the
+- [`ioc/rfq_ioc.py`](ioc/timing_ioc.py): An EPICS IOC (see below) that imports the
   *same* `core` and `timing_card` and thus re-implements none of their logic.
 
 **There is one core, but two front ends.** The GUI and the IOC are both just clients
@@ -116,7 +116,7 @@ audit trail for a system writing real timing to a real trap.
 
 ## Driving it from EPICS
 
-[`ioc/rfq_ioc.py`](ioc/rfq_ioc.py) is a thin EPICS IOC built on
+[`ioc/timing_ioc.py`](ioc/timing_ioc.py) is a thin EPICS IOC built on
 [`caproto`](https://caproto.github.io/caproto/). It maps Channel Access Process
 Variables (PVs) onto the existing `core.py` model and `timing_card.py` driver,
 re-implementing no pulse math. The point is decoupling, so once every knob and
@@ -128,12 +128,12 @@ It's dry-run safe like everything else, so no card and no EPICS Base install
 is required to bring it up:
 
 ```bash
-python ioc/rfq_ioc.py --list-pvs
+python ioc/timing_ioc.py --list-pvs
 # then, from another shell:
-caput   TAMUTRAP:RFQ:CH0:Active 1
-caput   TAMUTRAP:RFQ:CH0:Dur    5
-caput   TAMUTRAP:RFQ:Push       1
-camonitor TAMUTRAP:RFQ:RunState
+caput   TAMUTRAP:Timing:CH0:Active 1
+caput   TAMUTRAP:Timing:CH0:Dur    5
+caput   TAMUTRAP:Timing:Push       1
+camonitor TAMUTRAP:Timing:RunState
 ```
 
 A few design points, all forced by EPICS being what it is:

@@ -1,5 +1,7 @@
 # TAMUTRAP Pulse Timing Controller
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21477205.svg)](https://doi.org/10.5281/zenodo.21477205)
+
 This is the control system for the pulsed timing chain of **TAMUTRAP**,
 Texas A&M University's cylindrical Penning-trap experiment at the Cyclotron
 Institute. TAMUTRAP measures β-ν angular correlations in precision beta decay,

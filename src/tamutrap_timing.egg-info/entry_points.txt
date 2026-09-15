@@ -1,0 +1,3 @@
+[console_scripts]
+tamutrap-timing-gui = gui_tk:run
+tamutrap-timing-ioc = ioc.timing_ioc:main

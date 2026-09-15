@@ -1,3 +1,21 @@
+Metadata-Version: 2.4
+Name: tamutrap-timing
+Version: 1.0.0
+Summary: TAMUTRAP RFQ pulse-timing controller: pure pulse math, PulseBlaster driver, tkinter GUI, and (WIP) EPICS IOC.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.24
+Requires-Dist: pandas>=2.0
+Provides-Extra: gui
+Requires-Dist: matplotlib>=3.7; extra == "gui"
+Provides-Extra: ioc
+Requires-Dist: caproto>=1.1; extra == "ioc"
+Provides-Extra: dev
+Requires-Dist: pytest>=7; extra == "dev"
+Requires-Dist: pyepics>=3.5; extra == "dev"
+Dynamic: license-file
+
 # TAMUTRAP Pulse Timing Controller
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21477204.svg)](https://doi.org/10.5281/zenodo.21477204)
@@ -130,7 +148,7 @@ It's dry-run safe like everything else, so no card and no EPICS Base install
 is required to bring it up:
 
 ```bash
-tamutrap-timing-ioc --list-pvs      # or: python ioc/timing_ioc.py --list-pvs
+python ioc/timing_ioc.py --list-pvs
 # then, from another shell:
 caput   TAMUTRAP:Timing:CH0:Active 1
 caput   TAMUTRAP:Timing:CH0:Dur    5
@@ -166,14 +184,6 @@ pip install -e .[dev]       # + pytest, pyepics
 pip install -e .[gui,dev]   # extras compose
 ```
 
-Installing exposes two console commands, so an operator runs a name instead of a
-file path (each needs the matching extra):
-
-```bash
-tamutrap-timing-gui    # the tkinter operator app        (needs .[gui])
-tamutrap-timing-ioc    # the caproto EPICS IOC, dry-run safe (needs .[ioc])
-```
-
 The core is deliberately tiny (just numpy + pandas) so the *same* `core.py`
 imports cleanly on the GUI box, a headless IOC node, and CI without dragging the
 rest along. For reproducible control-node deploys there's a pinned
@@ -190,8 +200,8 @@ day-to-day work.
 git clone https://github.com/almondshawarma/TAMUTRAP-timing tamutrap-timing && cd tamutrap-timing
 pip install -e .[gui]
 
-# The operator app. Loads the example cycle, dry-run if no card is found.
-tamutrap-timing-gui        # or: python src/gui_tk.py
+# The operator app, loads the example cycle, dry-run if no card is found.
+python src/gui_tk.py
 ```
 
 Resource paths (the startup pulse file, the changelog) are anchored to
@@ -218,15 +228,15 @@ around their SpinAPI library. It's vendored here (SpinCore ships it under a
 permissive zlib-style license that explicitly allows redistribution) and loads the
 right library for whichever platform it's running on.
 
-**Windows** — [`src/spinapi64.dll`](src/spinapi64.dll) is vendored too, so a fresh
+**Windows** : [`src/spinapi64.dll`](src/spinapi64.dll) is vendored too, so a fresh
 checkout on the lab's Windows card machine is import-and-go, nothing else to fetch!
 
-**Linux (x86-64 and Raspberry Pi)** — the driver *isn't* a portable binary (a `.so`
+**Linux (x86-64 and Raspberry Pi)** : the driver *isn't* a portable binary (a `.so`
 compiled on one machine won't load on a different arch/distro/glibc), so it's built
 from source rather than committed. SpinCore's **source** is vendored in
-[`third_party/`](third_party/) for both `x86_64` and `ARMv7hf` — so you never depend
-on SpinCore's site staying up — and built per-machine. A helper picks the tarball
-matching `uname -m`, builds it, and prints the path to export:
+[`third_party/`](third_party/) for both `x86_64` and `ARMv7hf`, so you never depend
+on SpinCore's site staying up, and its built per-machine. A helper picks the tarball
+matching `uname -m`, builds it, printing the path to export:
 
 ```bash
 cd third_party && ./build_spinapi.sh
@@ -239,11 +249,11 @@ group (root); see SpinCore's
 [`third_party/README.md`](third_party/README.md).
 
 **Raspberry Pi as a self-contained EPICS node.** A Pi running the caproto IOC next
-to a **USB** PulseBlaster makes a cheap, headless control node — the IOC lives with
-the hardware and Channel Access is the network layer. Two constraints, both from
-SpinCore's driver: it's **USB boards only** (the Pi has no PCI slot), and the only
+to a **USB** PulseBlaster makes a cheap, headless control node. The IOC lives with
+the hardware and Channel Access is the network layer. The two constraints, both from
+SpinCore's driver,are that it's **USB boards only** (the Pi has no PCI slot), and the only
 ARM build is **32-bit ARMv7hf**, so flash **32-bit Raspberry Pi OS** (a 32-bit `.so`
-can't load into a 64-bit Python). Outside those lines the card isn't seen and the
+can't load into a 64-bit Python). Outside those lines, the card isn't seen and the
 app falls back to dry-run. Confirm the board with `lsusb | grep -i spincore`.
 
 On any machine without the board (or before the driver is set up), the import fails

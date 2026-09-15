@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # Build the vendored SpinCore SpinAPI driver for THIS machine's architecture and
-# help spinapi.py find it
+# help spinapi.py find it.
 #
 # The Linux driver is not a portable binary, so this script picks the
-# tarball that matches `uname -m`, so the same command works on an x86_64 control
-# node and on a Raspberry Pi:
+# tarball that matches `uname -m`, and hopefully works universally.
 #
 #     cd third_party && ./build_spinapi.sh
 #
@@ -27,7 +26,7 @@ case "$arch" in
     aarch64|arm64)
         cat >&2 <<'EOF'
 ERROR: This is a 64-bit ARM (aarch64) userland, but SpinCore only ships a 32-bit
-ARMv7hf SpinAPI build -- there is no aarch64 driver. A 32-bit .so cannot load into
+ARMv7hf SpinAPI build, there is no aarch64 driver. A 32-bit .so cannot load into
 a 64-bit Python process.
 
 To drive a (USB) PulseBlaster from a Raspberry Pi, flash 32-bit Raspberry Pi OS so

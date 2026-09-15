@@ -35,6 +35,14 @@ dev = [
     "pyepics>=3.5",
 ]
 
+# Console commands installed on PATH, so an operator runs a name instead of a
+# file path. `tamutrap-timing-gui` needs the [gui] extra; `tamutrap-timing-ioc`
+# needs [ioc]. Both are just the existing entry callables (gui_tk.run /
+# ioc.timing_ioc.main), so behavior is identical to running the files directly.
+[project.scripts]
+tamutrap-timing-gui = "gui_tk:run"
+tamutrap-timing-ioc = "ioc.timing_ioc:main"
+
 # ---------------------------------------------------------------------------
 # Packaging: the existing modules live flat in src/ (core.py, timing_card.py,
 # changelog.py, gui_tk.py) and import each other flatly ("from core import …").
@@ -46,8 +54,12 @@ dev = [
 # `tamutrap_rfq` package namespace to avoid generic top-level names like `core`.
 # ---------------------------------------------------------------------------
 [tool.setuptools]
-package-dir = { "" = "src" }
+# core/timing_card/changelog/gui_tk are flat modules under src/. The IOC is a
+# tiny package under ioc/ (its own directory, not moved into src/) so it can be
+# exposed as the ioc.timing_ioc:main console entry point above.
+package-dir = { "" = "src", "ioc" = "ioc" }
 py-modules = ["core", "timing_card", "changelog", "gui_tk"]
+packages = ["ioc"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

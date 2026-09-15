@@ -213,22 +213,30 @@ right library for whichever platform it's running on.
 **Windows** — [`src/spinapi64.dll`](src/spinapi64.dll) is vendored too, so a fresh
 checkout on the lab's Windows card machine is import-and-go, nothing else to fetch!
 
-**Linux** — the driver *isn't* a portable binary (a `.so` compiled on one machine
-won't load on a different distro/glibc), so it's built from source rather than
-committed. The SpinAPI **source** is vendored in [`third_party/`](third_party/) —
-so you never depend on SpinCore's site staying up — and built per-machine:
+**Linux (x86-64 and Raspberry Pi)** — the driver *isn't* a portable binary (a `.so`
+compiled on one machine won't load on a different arch/distro/glibc), so it's built
+from source rather than committed. SpinCore's **source** is vendored in
+[`third_party/`](third_party/) for both `x86_64` and `ARMv7hf` — so you never depend
+on SpinCore's site staying up — and built per-machine. A helper picks the tarball
+matching `uname -m`, builds it, and prints the path to export:
 
 ```bash
-cd third_party && tar xzf SpinAPI_linux-*.tar.gz
-cd SpinAPI_linux-*/ && mkdir build && cd build && cmake .. && make      # -> build/src/libspinapi.so
-# point the wrapper at it (bash shown; csh: setenv LD_LIBRARY_PATH "$cwd/src:$LD_LIBRARY_PATH"):
-export LD_LIBRARY_PATH="$PWD/src:$LD_LIBRARY_PATH"
+cd third_party && ./build_spinapi.sh
+export LD_LIBRARY_PATH="<path it prints>:$LD_LIBRARY_PATH"   # then spinapi.py finds it
 ```
 
 Non-root device access on Linux also needs a one-time udev rule plus a `spincore`
 group (root); see SpinCore's
 [Linux instructions](https://spincore.com/support/spinapi/Linux_Help.shtml) and
 [`third_party/README.md`](third_party/README.md).
+
+**Raspberry Pi as a self-contained EPICS node.** A Pi running the caproto IOC next
+to a **USB** PulseBlaster makes a cheap, headless control node — the IOC lives with
+the hardware and Channel Access is the network layer. Two constraints, both from
+SpinCore's driver: it's **USB boards only** (the Pi has no PCI slot), and the only
+ARM build is **32-bit ARMv7hf**, so flash **32-bit Raspberry Pi OS** (a 32-bit `.so`
+can't load into a 64-bit Python). Outside those lines the card isn't seen and the
+app falls back to dry-run. Confirm the board with `lsusb | grep -i spincore`.
 
 On any machine without the board (or before the driver is set up), the import fails
 and `timing_card.py` runs dry-run automatically, so nothing else significant changes.
